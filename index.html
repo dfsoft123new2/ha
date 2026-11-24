@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>居民须知</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wall:#d8dcd2; --dado:#6d8d78; --dado-line:#4f6b59; --paper:#ebeae2;
+  --ink:#1e231f; --ink-soft:#586058; --faint:#9aa196; --rule:#c8cbbf;
+  --red:#a2271d; --pencil:#3b3934; --slot:#070807;
+  --sclera:#e6e3d6; --lid:#b59c86; --iris:#4d5b4a;
+  --figure:rgba(18,22,19,.62); --vig:rgba(25,35,28,.38); --noise:.055;
+  --tape:rgba(250,250,238,.55); --shade:rgba(20,30,22,.22);
+  --depth:0;
+  --serif:"Noto Serif SC","Songti SC","STSong","Source Han Serif SC","SimSun",serif;
+  --hand:"Ma Shan Zheng","Xingkai SC","STXingkai","KaiTi","STKaiti",cursive;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --wall:#101310; --dado:#0d1812; --dado-line:#1b2a20; --paper:#181b18;
+    --ink:#c3c8bd; --ink-soft:#848b82; --faint:#4c534b; --rule:#2b302a;
+    --red:#c04d3e; --pencil:#a39d90; --slot:#000;
+    --sclera:#a9a596; --lid:#2b2420; --iris:#3c4a3a;
+    --figure:rgba(205,212,200,.10); --vig:rgba(0,0,0,.72); --noise:.07;
+    --tape:rgba(200,200,185,.07); --shade:rgba(0,0,0,.6);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --wall:#101310; --dado:#0d1812; --dado-line:#1b2a20; --paper:#181b18;
+  --ink:#c3c8bd; --ink-soft:#848b82; --faint:#4c534b; --rule:#2b302a;
+  --red:#c04d3e; --pencil:#a39d90; --slot:#000;
+  --sclera:#a9a596; --lid:#2b2420; --iris:#3c4a3a;
+  --figure:rgba(205,212,200,.10); --vig:rgba(0,0,0,.72); --noise:.07;
+  --tape:rgba(200,200,185,.07); --shade:rgba(0,0,0,.6);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--wall);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.9;overflow-x:hidden;font-variant-numeric:tabular-nums}
+body.locked{overflow:hidden}
+::selection{background:var(--red);color:var(--paper)}
+
+/* 墙：上白下绿的老式护墙漆 */
+#wall{position:fixed;inset:0;z-index:-1;background:linear-gradient(to bottom,var(--wall) 0,var(--wall) 63%,var(--dado-line) 63%,var(--dado-line) calc(63% + 3px),var(--dado) calc(63% + 3px),var(--dado) 100%)}
+#flicker{position:fixed;inset:0;background:#000;opacity:0;pointer-events:none;z-index:28}
+#vignette{position:fixed;inset:0;pointer-events:none;z-index:29;background:radial-gradient(ellipse at 50% 45%,transparent 50%,var(--vig) 100%)}
+#noise{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30;opacity:var(--noise)}
+
+main{max-width:680px;margin:0 auto;padding:64px 18px 40px;animation:breathe 7.3s ease-in-out infinite;transform-origin:50% 25vh}
+main.deep{animation:breatheDeep 4.1s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:rotate(-.5deg) scale(1)}50%{transform:rotate(-.5deg) scale(1.007)}}
+@keyframes breatheDeep{0%,100%{transform:rotate(-.5deg) scale(.995)}50%{transform:rotate(-.65deg) scale(1.022)}}
+
+.sheet{position:relative;background:var(--paper);padding:52px clamp(20px,6vw,52px) 56px;box-shadow:0 1px 0 var(--shade),0 18px 40px -18px var(--shade)}
+.sheet::before,.sheet::after{content:"";position:absolute;top:-12px;width:96px;height:26px;background:var(--tape)}
+.sheet::before{left:22px;transform:rotate(-7deg)}
+.sheet::after{right:26px;transform:rotate(5deg)}
+
+.meta{display:flex;justify-content:space-between;gap:4px 12px;flex-wrap:wrap;font-size:13px;color:var(--ink-soft);border-bottom:1px solid var(--ink);padding-bottom:6px}
+.title{font-weight:900;font-size:clamp(44px,11vw,72px);letter-spacing:.2em;line-height:1.15;margin:30px 0 8px}
+.title span{display:inline-block;transition:transform .12s}
+.title span:last-child{transform:translateY(.06em) rotate(1.8deg)}
+.title span.j{transform:translate(2px,-4px) skewX(-6deg)}
+.stamp{position:absolute;right:clamp(14px,5vw,40px);top:84px;border:3px double var(--red);color:var(--red);padding:2px 12px;font-weight:900;font-size:19px;letter-spacing:.3em;transform:rotate(-13deg);opacity:.78;white-space:nowrap;pointer-events:none}
+.sub{margin:0;color:var(--ink-soft)}
+.small{font-size:13px;color:var(--faint);margin:2px 0 0}
+.intro{margin:30px 0 0}
+
+h2{font-size:18px;font-weight:900;letter-spacing:.12em;margin:58px 0 16px}
+
+.form{width:100%;border-collapse:collapse;margin:34px 0 6px;font-size:15px}
+.form td{border:1px solid var(--ink-soft);padding:7px 12px;vertical-align:top}
+.form td:first-child{width:42%;color:var(--ink-soft)}
+.form td.alert{color:var(--red)}
+.form .note{font-size:12.5px;line-height:1.6;color:var(--faint)}
+
+.rules{margin:0;padding:0;list-style:none}
+.rule{display:grid;grid-template-columns:2.2em 1fr;gap:6px;padding:5px 0}
+.rule .n{color:var(--faint);text-align:right;padding-right:6px}
+.rule.gap{min-height:2.4em;cursor:default;outline:none}
+.rule.gap .n{opacity:0;transition:opacity 2s}
+.rule.gap .t{opacity:0;transition:opacity 2.4s;font-family:var(--hand);color:var(--red);font-size:21px;line-height:1.6}
+.rule.gap:hover .n,.rule.gap.on .n,.rule.gap:focus-visible .n{opacity:.5}
+.rule.gap:hover .t,.rule.gap.on .t,.rule.gap:focus-visible .t{opacity:.85}
+.rule.hl .t{background:color-mix(in srgb,var(--red) 16%,transparent)}
+.rule.new{animation:appear 3s ease both}
+@keyframes appear{from{opacity:0}to{opacity:1}}
+
+/* 纸上被挖开的一道缝 */
+.slot{background:var(--slot);margin:22px calc(-1 * clamp(20px,6vw,52px)) 0;padding:22px 10px;box-shadow:inset 0 8px 14px rgba(0,0,0,.6),inset 0 -6px 10px rgba(0,0,0,.5)}
+.eyes{display:flex;justify-content:center;gap:clamp(2px,1.4vw,12px)}
+.eye{width:clamp(36px,10.5vw,74px);height:auto;display:block;overflow:visible}
+.eye .sclera{fill:var(--sclera)}
+.eye .outline{fill:none;stroke:#000;stroke-width:2}
+.eye .irisc{fill:var(--iris)}
+.eye .pup{fill:#050505}
+.eye .glint{fill:#fff;opacity:.65}
+.eye .lid{fill:var(--lid);transform-box:fill-box;transform-origin:50% 0;transform:scaleY(0);transition:transform .07s ease-in}
+.eye.closed .lid{transform:scaleY(1)}
+.eyenote{text-align:center;font-size:14px;color:var(--ink-soft);margin:12px 0 0;min-height:1.9em}
+
+.field{display:flex;gap:12px;align-items:flex-end;margin:16px 0 4px}
+.field input{flex:1;min-width:0;font:inherit;font-size:17px;background:transparent;border:0;border-bottom:1px solid var(--ink);color:var(--ink);padding:4px 2px;border-radius:0;outline:none}
+.field input:focus-visible{border-bottom:2px solid var(--ink)}
+.field input::placeholder{color:var(--faint)}
+button{font:inherit;font-size:15px;letter-spacing:.15em;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:5px 16px;cursor:pointer;border-radius:0}
+button:hover{background:var(--ink);color:var(--paper)}
+button:focus-visible{outline:2px solid var(--red);outline-offset:3px}
+button:disabled{opacity:.45;cursor:default;background:transparent;color:var(--ink)}
+.mirror{font-family:var(--hand);font-size:19px;color:var(--pencil);transform:scaleX(-1);text-align:right;min-height:1.7em;opacity:.75;margin:0}
+.echo{font-family:var(--hand);font-size:21px;line-height:1.7;color:var(--pencil);margin-top:8px}
+.echo div{transform:rotate(-.6deg)}
+.echo div:nth-child(2n){transform:rotate(.5deg) translateX(6px)}
+
+.floors{margin:0 calc(-1 * clamp(20px,6vw,52px));padding:4px clamp(20px,6vw,52px) 22px;background:var(--paper);background:color-mix(in srgb,var(--paper),#000 calc(var(--depth) * 28%));transition:background 2s,letter-spacing 2s}
+.floors > .small{margin-top:10px}
+.floor{display:grid;grid-template-columns:3.2em 1fr;gap:8px;padding:12px 0;border-top:1px dashed var(--faint);animation:appear 1.6s ease both}
+.floor .fl{font-weight:900;color:var(--ink-soft)}
+.floor p{margin:0}
+.floor.deleted p{text-decoration:line-through;color:var(--faint)}
+.floorbtn{margin-top:14px}
+
+.foot{margin-top:64px;padding-top:14px;border-top:1px solid var(--ink);font-size:14px;color:var(--ink-soft)}
+.foot p{margin:2px 0}
+.redact{background:var(--ink);color:var(--ink);padding:0 .2em;cursor:default;outline:none}
+.redact.open{background:transparent;color:var(--red);font-family:var(--hand);font-size:1.25em}
+.smile{word-break:break-all}
+.abyss{height:110vh}
+.bottom{text-align:center;padding:0 0 40px}
+.hello{font-family:var(--hand);font-size:26px;color:var(--pencil);margin:0 0 10px}
+.bottom button{font-size:13px;background:var(--paper)}
+
+#gate{position:fixed;inset:0;z-index:60;background:var(--wall);display:flex;align-items:center;justify-content:center;padding:24px;transition:opacity 1.8s}
+#gate.gone{opacity:0;pointer-events:none}
+.gatebox{text-align:center;max-width:440px}
+.gatebox h1{font-weight:900;font-size:clamp(26px,6.4vw,36px);letter-spacing:.14em;margin:6px 0 30px}
+.gatebox .btns{display:flex;gap:18px;justify-content:center}
+.gatebox .btns button{min-width:7em}
+.gatebox .btns button:last-child{position:relative;top:3px;left:2px}
+.gatebox p{margin:0;color:var(--ink-soft);font-size:14px}
+.gatebox .tiny{margin-top:28px;font-size:13px;line-height:1.8;color:var(--faint)}
+
+#figure{position:fixed;bottom:0;height:80vh;aspect-ratio:1/4;pointer-events:none;opacity:0;transition:opacity .15s;filter:blur(5px);z-index:27}
+#figure.show{opacity:1;transition:opacity 5.5s ease-in}
+#figure svg{display:block;height:100%;width:100%;fill:var(--figure)}
+#follower{position:fixed;left:0;top:0;width:12px;height:12px;border:1px solid var(--ink-soft);border-radius:50%;pointer-events:none;z-index:45;opacity:0;transition:opacity 1.2s}
+.whisper{position:fixed;z-index:46;pointer-events:none;font-family:var(--hand);font-size:20px;color:var(--pencil);opacity:0;transition:opacity .4s;white-space:nowrap}
+.whisper.show{opacity:.9}
+
+#toastbar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:center;padding:calc(env(safe-area-inset-top,0px) + 16px) 16px 0;pointer-events:none;z-index:55}
+#toast{background:var(--ink);color:var(--paper);font-size:14px;padding:6px 16px;opacity:0;transition:opacity .6s;max-width:min(92vw,520px);text-align:center}
+#toast.show{opacity:.93}
+#sndbar{position:fixed;right:0;bottom:0;padding:0 14px calc(env(safe-area-inset-bottom,0px) + 14px) 0;z-index:56}
+#snd{font-size:12.5px;padding:3px 10px;background:var(--paper);letter-spacing:.1em}
+#snd:hover{background:var(--ink);color:var(--paper)}
+#ctx{position:fixed;z-index:58;background:var(--paper);border:1px solid var(--ink);display:none;min-width:130px;font-size:14px;box-shadow:3px 3px 0 var(--shade)}
+#ctx div{padding:5px 14px;cursor:pointer}
+#ctx div:hover{background:var(--ink);color:var(--paper)}
+.g.glitch{color:var(--red)}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  main{padding:44px 10px 30px}
+  .stamp{top:66px;font-size:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  main,main.deep{animation:none;transform:rotate(-.5deg)}
+  #figure.show{transition:opacity 1.5s}
+}
+</style>
+</head>
+<body class="locked">
+<div id="wall" aria-hidden="true"></div>
+
+<main id="main">
+  <article class="sheet">
+    <header>
+      <div class="meta"><span>文件编号 04-B-？</span><span>张贴于第 0 层楼梯间</span></div>
+      <h1 class="title" id="title" aria-label="居民须知"><span>居</span><span>民</span><span>须</span><span>知</span></h1>
+      <p class="sub" id="visit"></p>
+      <p class="small">阅读完毕后，请将本页面放回原处。</p>
+      <div class="stamp" id="stamp">已被阅</div>
+    </header>
+
+    <p class="intro">你好。你可能是被一个链接带到这里的，也可能是自己走进来的。<span class="g" data-alt="两种情况，我们都处理掉了。">两种情况，我们都处理过。</span>请按顺序阅读，不要跳着看。跳过去的部分，会自己补上。</p>
+
+    <table class="form" aria-label="当前状态">
+      <tr><td>此页面上的人数</td><td id="vPeople">1（你）</td></tr>
+      <tr><td>你已停留</td><td id="vStay">0 分 00 秒</td></tr>
+      <tr><td>距你上次眨眼</td><td><span id="vBlink">0 秒</span><div class="note">眨眼后请点一下页面。我们看不见你的眼睛。目前。</div></td></tr>
+      <tr><td>房间温度</td><td id="vTemp">23.0 ℃</td></tr>
+      <tr><td>你那里现在是</td><td><span id="vClock">--:--</span><div class="note" id="vRemark"></div></td></tr>
+    </table>
+
+    <h2>一、守则</h2>
+    <ol class="rules" id="rules">
+      <li class="rule" id="r1"><span class="n">1.</span><span class="t">本守则没有第 4 条。</span></li>
+      <li class="rule" id="r2"><span class="n">2.</span><span class="t">如果有人在念你的名字，不要回答。<span class="g" data-alt="那就是你的名字。">那不是你的名字，只是很像。</span></span></li>
+      <li class="rule" id="r3"><span class="n">3.</span><span class="t" id="r3t">请保持光标移动。它只会停在不动的东西上。</span></li>
+      <li class="rule gap" id="r4" tabindex="0"><span class="n">4.</span><span class="t">它数到四的时候，会转过身来。</span></li>
+      <li class="rule" id="r5"><span class="n">5.</span><span class="t">页面最底下<span class="g" data-alt="什么都有">什么都没有</span>。如果你在最底下看见了什么，请回到第 3 条。</span></li>
+      <li class="rule" id="r6"><span class="n">6.</span><span class="t" id="r6t">跟在你光标后面的那个，<span class="g" data-alt="就是你的">不是你的</span>光标。</span></li>
+      <li class="rule" id="r7"><span class="n">7.</span><span class="t">不要试图理解这份守则。理解，是它进来的方式。</span></li>
+      <li class="rule" id="r8"><span class="n">8.</span><span class="t">本守则共 7 条。</span></li>
+      <li class="rule" id="r9"><span class="n">9.</span><span class="t">请忽略第 8 条。</span></li>
+    </ol>
+
+    <h2>二、请看这里</h2>
+    <div class="slot"><div class="eyes" id="eyes"></div></div>
+    <p class="eyenote" id="eyenote">它们都在看你。中间那只除外，中间那只在看你身后。</p>
+
+    <h2>三、登记</h2>
+    <p>请写下此刻站在你身后的东西的名字。不知道也没关系，写你自己的名字也可以。它们很像。</p>
+    <div class="field">
+      <input id="nameIn" maxlength="20" autocomplete="off" placeholder="名字" aria-label="名字">
+      <button id="nameBtn" type="button">提交</button>
+    </div>
+    <p class="mirror" id="mirror" aria-hidden="true"></p>
+    <div class="echo" id="echo" aria-live="polite"></div>
+
+    <h2><span class="g" data-alt="四">三</span>、往下</h2>
+    <div class="floors" id="floorsWrap">
+      <p class="small">电梯只能往下。按钮上的字已经磨掉了，但你知道该按哪一个。</p>
+      <div id="floors"></div>
+      <button id="down" class="floorbtn" type="button">下一层</button>
+    </div>
+
+    <footer class="foot">
+      <p>本页面由 <span class="redact" id="redact" tabindex="0">▇▇▇▇</span> 维护。</p>
+      <p>如有疑问，请不要联系我们。我们会联系你。</p>
+      <p>最后更新：明天 03:14</p>
+      <p class="smile">我们一直在微笑 <span id="smile">:)</span></p>
+    </footer>
+  </article>
+
+  <div class="abyss" aria-hidden="true"></div>
+  <div class="bottom">
+    <p class="hello" id="hello">你好。</p>
+    <button id="toR3" type="button">回到第 3 条</button>
+  </div>
+</main>
+
+<div id="figure" aria-hidden="true">
+  <svg viewBox="0 0 100 400" preserveAspectRatio="xMidYMax meet">
+    <ellipse cx="50" cy="36" rx="12" ry="16" transform="rotate(9 50 36)"/>
+    <path d="M45 50 L55 50 C61 58 73 62 75 80 C77 120 72 170 70 220 C68 270 66 330 64 400 L36 400 C34 330 32 270 30 220 C28 170 23 120 25 80 C27 62 39 58 45 50 Z"/>
+    <path d="M27 72 C17 110 15 180 13 250 C12 290 13 320 15 336 L20 335 C21 300 23 250 27 190 C29 150 31 110 33 84 Z"/>
+    <path d="M73 72 C83 110 85 180 87 250 C88 290 87 320 85 336 L80 335 C79 300 77 250 73 190 C71 150 69 110 67 84 Z"/>
+  </svg>
+</div>
+<div id="follower" aria-hidden="true"></div>
+<div id="flicker" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
+<canvas id="noise" aria-hidden="true"></canvas>
+<div id="toastbar"><div id="toast" role="status"></div></div>
+<div id="sndbar"><button id="snd" type="button">声音：开</button></div>
+<div id="ctx" role="menu"><div data-a="0" role="menuitem">返回</div><div data-a="0" role="menuitem">返回</div><div data-a="1" role="menuitem">不要返回</div></div>
+
+<div id="gate">
+  <div class="gatebox">
+    <p>在继续之前</p>
+    <h1>请确认你是你。</h1>
+    <div class="btns">
+      <button type="button" data-enter>我是</button>
+      <button type="button" data-enter id="enter2">我是</button>
+    </div>
+    <p class="tiny">如果你不是，请假装没有看到这一页。我们也会假装。<br>本页面有声音。很轻，像有人在隔壁。</p>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const coarse = matchMedia('(pointer: coarse)').matches;
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const pad = n => String(n).padStart(2, '0');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const ORIG_TITLE = document.title;
+const main = $('#main');
+
+let entered = false;
+let t0 = Date.now();
+let mx = innerWidth / 2, my = innerHeight / 2;
+let progScroll = -1e9;
+let lastBlink = Date.now(), blinkWarned = false;
+let temp = 23.0, lastTempStep = Date.now();
+let lastAct = Date.now();
+let regName = '';
+
+/* ---------- 存储 ---------- */
+function sget(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+function sset(k, v){ try { localStorage.setItem(k, v); } catch (e) {} }
+let visits = parseInt(sget('jm-visits') || '0', 10);
+if (!Number.isFinite(visits) || visits < 0) visits = 0;
+visits += 1;
+sset('jm-visits', String(visits));
+let soundOn = sget('jm-sound') !== '0';
+
+$('#visit').textContent =
+  visits <= 1 ? '这是你第 1 次来。至少，这是你第一次被记下来。' :
+  visits === 2 ? '欢迎回来。你上次走的时候，没有把门带上。' :
+  `这是你第 ${visits} 次来。前 ${visits - 1} 次里，有一次不是你。`;
+
+/* ---------- 提示条 ---------- */
+const toastEl = $('#toast'); const tq = []; let tBusy = false;
+function toast(msg, ms = 2800){ tq.push([msg, ms]); if (!tBusy) nextToast(); }
+function nextToast(){
+  const it = tq.shift();
+  if (!it){ tBusy = false; return; }
+  tBusy = true;
+  toastEl.textContent = it[0];
+  toastEl.classList.add('show');
+  setTimeout(() => { toastEl.classList.remove('show'); setTimeout(nextToast, 700); }, it[1]);
+}
+function whisper(text){
+  const w = document.createElement('div');
+  w.className = 'whisper'; w.textContent = text;
+  document.body.appendChild(w);
+  w.style.left = Math.min(Math.max(mx + 16, 8), innerWidth - 230) + 'px';
+  w.style.top = Math.min(Math.max(my - 30, 8), innerHeight - 44) + 'px';
+  void w.offsetWidth;
+  w.classList.add('show');
+  setTimeout(() => { w.classList.remove('show'); setTimeout(() => w.remove(), 500); }, 1900);
+}
+
+/* ---------- 声音 ---------- */
+let AC = null, master = null, noiseBuf = null, beatOsc = null;
+const VOL = 0.7;
+function startAudio(){
+  if (AC) return;
+  const C = window.AudioContext || window.webkitAudioContext;
+  if (!C) return;
+  try { AC = new C(); } catch (e) { AC = null; return; }
+  const t = AC.currentTime;
+  master = AC.createGain();
+  master.gain.setValueAtTime(0, t);
+  master.gain.linearRampToValueAtTime(soundOn ? VOL : 0, t + 6);
+  master.connect(AC.destination);
+  const osc = (type, f, g) => {
+    const o = AC.createOscillator(); o.type = type; o.frequency.value = f;
+    const gn = AC.createGain(); gn.gain.value = g;
+    o.connect(gn); gn.connect(master); o.start();
+    return { o, gn };
+  };
+  osc('sine', 55, 0.09);
+  beatOsc = osc('sine', 55.9, 0.09);
+  const tri = osc('triangle', 110.4, 0.022);
+  osc('sine', 220, 0.011);
+  osc('sine', 221.7, 0.011);
+  const lfo = AC.createOscillator(); lfo.frequency.value = 0.07;
+  const lg = AC.createGain(); lg.gain.value = 1.6;
+  lfo.connect(lg); lg.connect(tri.o.frequency); lfo.start();
+  const hi = osc('sine', 7040, 0.0022);
+  const hl = AC.createOscillator(); hl.frequency.value = 0.031;
+  const hg = AC.createGain(); hg.gain.value = 0.0022;
+  hl.connect(hg); hg.connect(hi.gn.gain); hl.start();
+  noiseBuf = AC.createBuffer(1, AC.sampleRate * 2, AC.sampleRate);
+  const ch = noiseBuf.getChannelData(0);
+  for (let i = 0; i < ch.length; i++) ch[i] = Math.random() * 2 - 1;
+  const src = AC.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
+  const bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 320; bp.Q.value = 0.6;
+  const ng = AC.createGain(); ng.gain.value = 0.018;
+  src.connect(bp); bp.connect(ng); ng.connect(master); src.start();
+}
+function tension(on){
+  if (!AC || !beatOsc) return;
+  beatOsc.o.frequency.setTargetAtTime(on ? 57.3 : 55.9, AC.currentTime, on ? 2 : 0.3);
+}
+function knock(){
+  if (!AC || !soundOn || !noiseBuf) return;
+  const t = AC.currentTime + 0.05;
+  [0, 0.38].forEach(d => {
+    const s = AC.createBufferSource(); s.buffer = noiseBuf;
+    const lp = AC.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 160;
+    const g = AC.createGain();
+    g.gain.setValueAtTime(0, t + d);
+    g.gain.linearRampToValueAtTime(1.6, t + d + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.001, t + d + 0.18);
+    s.connect(lp); lp.connect(g); g.connect(master);
+    s.start(t + d, Math.random()); s.stop(t + d + 0.25);
+    const o = AC.createOscillator();
+    o.frequency.setValueAtTime(90, t + d);
+    o.frequency.exponentialRampToValueAtTime(45, t + d + 0.15);
+    const og = AC.createGain();
+    og.gain.setValueAtTime(0, t + d);
+    og.gain.linearRampToValueAtTime(0.5, t + d + 0.004);
+    og.gain.exponentialRampToValueAtTime(0.001, t + d + 0.2);
+    o.connect(og); og.connect(master);
+    o.start(t + d); o.stop(t + d + 0.25);
+  });
+}
+const snd = $('#snd');
+const sndLabel = () => { snd.textContent = soundOn ? '声音：开' : '声音：关'; };
+sndLabel();
+snd.addEventListener('click', () => {
+  soundOn = !soundOn;
+  sset('jm-sound', soundOn ? '1' : '0');
+  sndLabel();
+  if (soundOn && !AC) startAudio();
+  if (AC && master){
+    if (soundOn && AC.state === 'suspended') AC.resume().catch(() => {});
+    master.gain.cancelScheduledValues(AC.currentTime);
+    master.gain.setTargetAtTime(soundOn ? VOL : 0, AC.currentTime, 0.4);
+  }
+});
+
+/* ---------- 入口 ---------- */
+const gate = $('#gate');
+$$('[data-enter]').forEach(b => b.addEventListener('click', enter));
+const e2 = $('#enter2');
+if (!coarse){
+  e2.addEventListener('pointerenter', () => { e2.textContent = '你确定吗'; });
+  e2.addEventListener('pointerleave', () => { e2.textContent = '我是'; });
+}
+function enter(){
+  if (entered) return;
+  entered = true;
+  t0 = Date.now(); lastBlink = Date.now(); lastAct = Date.now(); lastTempStep = Date.now();
+  gate.classList.add('gone');
+  document.body.classList.remove('locked');
+  if (soundOn) startAudio();
+  setTimeout(() => gate.remove(), 2000);
+  setTimeout(() => toast('谢谢。我们相信你。'), 1600);
+  schedKnock(); schedFlicker(); schedGlitch();
+}
+
+/* ---------- 触屏版守则 ---------- */
+if (coarse){
+  $('#r3t').textContent = '请保持手指移动。它只会停在不动的东西上。';
+  $('#r6t').innerHTML = '跟在你手指后面的那个，<span class="g" data-alt="就是你的">不是你的</span>手指。';
+}
+$('#r4').addEventListener('click', e => e.currentTarget.classList.toggle('on'));
+
+/* ---------- 状态表 ---------- */
+const vPeople = $('#vPeople'), vStay = $('#vStay'), vBlink = $('#vBlink'),
+      vTemp = $('#vTemp'), vClock = $('#vClock'), vRemark = $('#vRemark');
+let peopleOverride = '', peopleUntil = 0;
+const PEOPLE = [[0,'1（你）'],[40,'2（你，以及）'],[95,'2'],[150,'1（以及）'],[230,'3（你，以及，以及）'],[320,'1（你）'],[400,'0'],[470,'1（你？）']];
+function hourRemark(h){
+  if (h < 5) return '这个时间，你不应该还醒着。';
+  if (h < 8) return '太早了。它们还没有走完。';
+  if (h < 18) return '白天。白天也没有用。';
+  return '天黑了。或者，已经黑了很久了。';
+}
+function tick(){
+  const now = new Date();
+  const s = Math.floor((Date.now() - t0) / 1000);
+  vStay.textContent = s < 180 ? `${Math.floor(s / 60)} 分 ${pad(s % 60)} 秒` : (s < 360 ? '很久' : '一直');
+  let p = PEOPLE[0][1];
+  for (const [t, v] of PEOPLE) if (s >= t) p = v;
+  vPeople.textContent = (peopleOverride && Date.now() < peopleUntil) ? peopleOverride : p;
+  const b = Math.floor((Date.now() - lastBlink) / 1000);
+  vBlink.textContent = `${b} 秒`;
+  vBlink.parentElement.classList.toggle('alert', b >= 30);
+  if (b >= 30 && !blinkWarned && entered && !document.hidden){
+    blinkWarned = true;
+    toast('你已经 30 秒没有眨眼了。它注意到了。', 3400);
+  }
+  if (entered && Date.now() - lastTempStep > 17000){ lastTempStep = Date.now(); temp -= 0.1; }
+  temp = Math.max(temp, 14.2);
+  vTemp.textContent = `${temp.toFixed(1)} ℃`;
+  vClock.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  vRemark.textContent = hourRemark(now.getHours());
+}
+tick();
+setInterval(tick, 1000);
+
+/* ---------- 眼睛 ---------- */
+const ALM = 'M-46 0 Q0 -40 46 0 Q0 40 -46 0 Z';
+const eyesWrap = $('#eyes');
+const N = 7, MID = 3, SLOW = 1, CONTRA = 5;
+const eyes = [];
+for (let i = 0; i < N; i++){
+  const wrap = document.createElement('div');
+  wrap.innerHTML = `<svg class="eye" viewBox="-50 -30 100 60" aria-hidden="true"><defs><clipPath id="ec${i}"><path d="${ALM}"/></clipPath></defs><path class="sclera" d="${ALM}"/><g clip-path="url(#ec${i})"><g class="iris"><circle class="irisc" r="14"/><ellipse class="pup" rx="6.5" ry="6.5"/>${i === MID ? '' : '<circle class="glint" cx="4" cy="-5" r="2.2"/>'}</g><rect class="lid" x="-50" y="-30" width="100" height="60"/></g><path class="outline" d="${ALM}"/></svg>`;
+  const el = wrap.firstElementChild;
+  eyesWrap.appendChild(el);
+  eyes.push({ i, el, iris: el.querySelector('.iris'), pup: el.querySelector('.pup'), x: 0, y: 0, rx: 6.5, ry: 6.5 });
+}
+const eyenote = $('#eyenote');
+const EYE_NOTE = eyenote.textContent;
+let midHover = 0, midSlit = false, midTaps = 0;
+const midEl = eyes[MID].el;
+midEl.addEventListener('pointerenter', () => { if (midSlit) return; midHover = Date.now(); eyenote.textContent = '不要看它太久。'; });
+midEl.addEventListener('pointerleave', () => { midHover = 0; if (!midSlit) eyenote.textContent = EYE_NOTE; });
+midEl.addEventListener('click', () => { if (++midTaps >= 3 && !midSlit) slitMid(); });
+function slitMid(){ midSlit = true; eyenote.textContent = '好了。它记住你了。'; }
+
+function updEyes(){
+  const s = (Date.now() - t0) / 1000;
+  for (const e of eyes){
+    const r = e.el.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    let dx = mx - cx, dy = my - cy;
+    if (e.i === CONTRA){ dx = -dx; dy = -dy; }
+    const d = Math.hypot(dx, dy);
+    const a = Math.atan2(dy, dx);
+    const k = Math.min(1, d / 260);
+    let tx = Math.cos(a) * 19 * k, ty = Math.sin(a) * 8 * k;
+    if (e.i === MID){ tx = 0; ty = 0; }
+    const ease = e.i === SLOW ? 0.02 : 0.22;
+    e.x += (tx - e.x) * ease; e.y += (ty - e.y) * ease;
+    e.iris.setAttribute('transform', `translate(${e.x.toFixed(2)} ${e.y.toFixed(2)})`);
+    let tw, th;
+    if (e.i === MID){
+      if (midSlit){ tw = 1.8; th = 12; }
+      else { const m = 6 + Math.min(5, s / 50); tw = m; th = m; }
+    } else {
+      const near = Math.hypot(mx - cx, my - cy) < 170;
+      tw = th = near ? 9.5 : 6;
+    }
+    e.rx += (tw - e.rx) * 0.06; e.ry += (th - e.ry) * 0.06;
+    e.pup.setAttribute('rx', e.rx.toFixed(2));
+    e.pup.setAttribute('ry', e.ry.toFixed(2));
+  }
+  if (midHover && !midSlit && Date.now() - midHover > 3000) slitMid();
+}
+function blink(e, d = 110){
+  if (e.i === MID) return;
+  e.el.classList.add('closed');
+  setTimeout(() => e.el.classList.remove('closed'), d);
+}
+function schedBlink(e){
+  setTimeout(() => {
+    if (!document.hidden){
+      blink(e);
+      if (Math.random() < 0.18) setTimeout(() => blink(e), 230);
+    }
+    schedBlink(e);
+  }, rnd(1600, 7200));
+}
+eyes.forEach(schedBlink);
+
+/* ---------- 跟在光标后面的那个 ---------- */
+const fol = $('#follower');
+const trail = [];
+let fx = -50, fy = -50;
+addEventListener('pointermove', e => {
+  mx = e.clientX; my = e.clientY;
+  trail.push([performance.now(), mx, my]);
+  if (trail.length > 600) trail.splice(0, trail.length - 600);
+  if (entered) fol.style.opacity = '.75';
+}, { passive: true });
+function updFol(){
+  const target = performance.now() - 900;
+  while (trail.length > 1 && trail[1][0] <= target) trail.shift();
+  if (trail.length && trail[0][0] <= target){ fx = trail[0][1] + 7; fy = trail[0][2] + 6; }
+  fol.style.transform = `translate(${fx - 6}px, ${fy - 6}px)`;
+}
+function frame(){ updEyes(); updFol(); requestAnimationFrame(frame); }
+requestAnimationFrame(frame);
+
+addEventListener('pointerdown', e => {
+  mx = e.clientX; my = e.clientY;
+  lastBlink = Date.now(); blinkWarned = false;
+  eyes.forEach(x => blink(x, 140));
+});
+
+/* ---------- 登记 ---------- */
+const nameIn = $('#nameIn'), nameBtn = $('#nameBtn'), mirror = $('#mirror'), echo = $('#echo');
+let submits = 0, typing = false, calledOut = false;
+nameIn.addEventListener('input', () => {
+  const v = nameIn.value.trim();
+  mirror.textContent = v ? [...`（它在跟着念：${v}）`].reverse().join('') : '';
+});
+nameIn.addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); submitName(); } });
+nameBtn.addEventListener('click', submitName);
+async function typeLines(lines){
+  typing = true; nameBtn.disabled = true;
+  for (const l of lines){
+    const d = document.createElement('div');
+    echo.appendChild(d);
+    for (const ch of l){ d.textContent += ch; await sleep(rnd(45, 130)); }
+    await sleep(rnd(450, 950));
+  }
+  typing = false; nameBtn.disabled = false;
+}
+function submitName(){
+  if (typing) return;
+  const v = nameIn.value.trim().slice(0, 20);
+  let lines;
+  if (!v){
+    lines = ['你什么都没有写。', '它很满意。'];
+  } else {
+    submits++;
+    if (submits === 1){
+      lines = [`已收到：「${v}」。`, '正在比对……', `「${v}」，我们这里已经有一位了。`, '它说，它先到的。', '登记完成。从现在起，请不要单独回应这个名字。'];
+      regName = v;
+      scheduleCallout();
+    } else if (submits === 2){
+      lines = [`你又写了一次「${v}」。`, '它听见了两次。', '现在它会念了。'];
+    } else {
+      lines = ['你还要写多少次？', '它已经学会你的笔迹了。'];
+    }
+  }
+  echo.textContent = '';
+  nameBtn.textContent = '已交给它';
+  nameIn.value = ''; mirror.textContent = '';
+  typeLines(lines);
+}
+function scheduleCallout(){
+  if (calledOut) return;
+  calledOut = true;
+  setTimeout(() => {
+    toast(`……${regName}……`, 2200);
+    setTimeout(() => toast('你刚才回答了吗？', 2800), 3400);
+  }, 45000);
+}
+
+/* ---------- 往下 ---------- */
+const floorsEl = $('#floors'), floorsWrap = $('#floorsWrap'), downBtn = $('#down');
+function slowTime(){ const d = new Date(Date.now() - 4 * 60000); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; }
+const FLOORS = [
+  ['B1', '这里是停车场。没有车。有一个车位的编号，是你的生日。'],
+  ['B2', () => `墙上的钟显示 ${slowTime()}。它比你慢四分钟，一直在追。`],
+  ['B3', '有人在这里留下了一双鞋。鞋尖朝着你来的方向。'],
+  ['B4', '（本层已被删除。请不要在本层停留。）', 'deleted'],
+  ['B5', '你听见楼上有人往下走。步子和你一模一样，只是慢半拍。'],
+  ['B6', '灯是亮的。灯一直都是亮的。我们也不知道为什么要特意说这一句。'],
+  ['B7', '这里有你小时候房间的味道。连墙角发霉的那一块都一样。'],
+  ['B8', '你已经下来很久了。上面的人说，你从来没有下来过。'],
+  ['B9', '往回看。不要往回看。往回看。', 'jolt'],
+  ['B10', '这一层的墙上挂满了照片。照片里拍的都是这一层的墙。'],
+  ['B11', '有一扇门。门上写着「已经开过了」。'],
+  ['B12', '你数了一下，这里的楼梯比上一层多一级。多出来的那一级是软的。'],
+  ['B13', '（这里本来有一句话。它被借走了，还没有还回来。）'],
+  ['B14', '很安静。安静到你能听见这一页在呼吸。', 'breath'],
+  ['B15', '你的影子先到了。它在这里等你，看起来等了很久。'],
+  ['B16', '已经没有下一层了。'],
+  ['B17', '你说过，没有下一层了。'],
+  ['B18', '……'],
+  ['1F', '你回到了一楼。这不是你出发的那个一楼。', 'end']
+];
+let fi = 0, looped = false;
+downBtn.addEventListener('click', () => {
+  if (looped) return;
+  if (fi >= FLOORS.length){ loopBack(); return; }
+  const [code, txt, kind] = FLOORS[fi++];
+  const row = document.createElement('div');
+  row.className = 'floor' + (kind === 'deleted' ? ' deleted' : '');
+  const a = document.createElement('span'); a.className = 'fl'; a.textContent = code;
+  const p = document.createElement('p'); p.textContent = typeof txt === 'function' ? txt() : txt;
+  row.append(a, p);
+  floorsEl.appendChild(row);
+  const depth = Math.min(1, fi / FLOORS.length);
+  floorsWrap.style.setProperty('--depth', depth.toFixed(3));
+  floorsWrap.style.letterSpacing = (depth * 0.32).toFixed(3) + 'em';
+  p.style.opacity = (1 - depth * 0.4).toFixed(2);
+  progScroll = performance.now();
+  row.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+  if (kind === 'jolt' && !reduce){
+    setTimeout(() => {
+      progScroll = performance.now();
+      scrollBy({ top: -90, behavior: 'smooth' });
+      setTimeout(() => { progScroll = performance.now(); scrollBy({ top: 90, behavior: 'smooth' }); }, 700);
+    }, 900);
+  }
+  if (kind === 'breath'){
+    main.classList.add('deep');
+    setTimeout(() => main.classList.remove('deep'), 22000);
+  }
+  if (kind === 'deleted'){
+    let tm;
+    row.addEventListener('pointerenter', () => { tm = setTimeout(() => toast('你停留了。'), 2000); });
+    row.addEventListener('pointerleave', () => clearTimeout(tm));
+  }
+  if (kind === 'end') downBtn.textContent = '回到上面';
+  else if (fi >= 16) downBtn.textContent = '↓';
+  else if (fi >= 13) downBtn.textContent = '下下一层';
+  else if (fi >= 10) downBtn.textContent = '下 一 层';
+});
+function loopBack(){
+  looped = true;
+  progScroll = performance.now() + 2000;
+  scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  $('#stamp').textContent = '已被阅 ×2';
+  $('#visit').textContent = '欢迎回来。你刚才没有离开过。';
+  downBtn.textContent = '电梯停了';
+  downBtn.disabled = true;
+}
+
+/* ---------- 你不动的时候 ---------- */
+const fig = $('#figure');
+let figOn = false, figAt = 0;
+const WHISPERS = ['（刚才那是你吗）', '（它刚才在那里）', '（你一动，它就走了）', '（下次别动那么快）', '（它还没看完）'];
+function act(){ lastAct = Date.now(); if (figOn) hideFig(); }
+['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart', 'scroll'].forEach(ev => addEventListener(ev, act, { passive: true }));
+setInterval(() => {
+  if (entered && !figOn && !document.hidden && Date.now() - lastAct > 8500) showFig();
+}, 400);
+function showFig(){
+  figOn = true; figAt = Date.now();
+  const left = Math.random() < 0.5;
+  fig.style.left = left ? '-3vw' : 'auto';
+  fig.style.right = left ? 'auto' : '-3vw';
+  fig.classList.add('show');
+  temp -= 0.6;
+  tension(true);
+}
+function hideFig(){
+  figOn = false;
+  fig.classList.remove('show');
+  tension(false);
+  if (Date.now() - figAt > 2600) whisper(pick(WHISPERS));
+}
+
+/* ---------- 你离开的时候 ---------- */
+let hiddenAt = 0, hidT = [], returned = false;
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden){
+    hiddenAt = Date.now();
+    document.title = regName ? `${regName}，回来` : '回来';
+    hidT.push(setTimeout(() => { document.title = '我看到你切走了'; }, 5000));
+    hidT.push(setTimeout(() => { document.title = '门没有关'; }, 15000));
+    hidT.push(setTimeout(() => { document.title = '（ ）'; }, 32000));
+    return;
+  }
+  hidT.forEach(clearTimeout); hidT = [];
+  document.title = ORIG_TITLE;
+  if (AC && AC.state === 'suspended' && soundOn) AC.resume().catch(() => {});
+  if (!entered || !hiddenAt) return;
+  const sec = Math.round((Date.now() - hiddenAt) / 1000);
+  hiddenAt = 0;
+  if (sec < 2) return;
+  toast(`你离开了 ${sec} 秒。这期间，我们没有动任何东西。`, 3600);
+  peopleOverride = '2（你回来了。它没有走。）';
+  peopleUntil = Date.now() + 20000;
+  if (!returned){ returned = true; tamper(); }
+  setTimeout(() => { knock(); toast('（咚、咚）', 1800); toast('（不是这个房间）', 2400); }, 4800);
+});
+function tamper(){
+  const a = $('#r2 .t'), b = $('#r5 .t');
+  const tmp = a.innerHTML; a.innerHTML = b.innerHTML; b.innerHTML = tmp;
+  const li = document.createElement('li');
+  li.className = 'rule new';
+  li.innerHTML = '<span class="n">10.</span><span class="t">刚才你不在的时候，这一条是自己出现的。</span>';
+  $('#rules').appendChild(li);
+}
+
+/* ---------- 复制、右键、离开窗口、滚太快、打字 ---------- */
+document.addEventListener('copy', e => {
+  if (e.target instanceof Element && e.target.closest('input')) return;
+  if (!e.clipboardData) return;
+  e.preventDefault();
+  e.clipboardData.setData('text/plain', '你不能把这里的东西带出去。');
+  toast('已复制。不过，复制下来的不是你选的那一段。');
+});
+const ctx = $('#ctx');
+addEventListener('contextmenu', e => {
+  if (!entered) return;
+  e.preventDefault();
+  ctx.style.display = 'block';
+  const w = ctx.offsetWidth, h = ctx.offsetHeight;
+  ctx.style.left = Math.max(4, Math.min(e.clientX, innerWidth - w - 6)) + 'px';
+  ctx.style.top = Math.max(4, Math.min(e.clientY, innerHeight - h - 6)) + 'px';
+});
+ctx.addEventListener('click', e => {
+  const it = e.target.closest('[data-a]');
+  if (!it) return;
+  ctx.style.display = 'none';
+  toast(it.dataset.a === '1' ? '好的。我们也不回去了。' : '返回到哪里？');
+});
+addEventListener('pointerdown', e => { if (!ctx.contains(e.target)) ctx.style.display = 'none'; });
+let leftOnce = false;
+document.addEventListener('mouseout', e => {
+  if (e.relatedTarget || !entered || coarse) return;
+  fol.style.opacity = '0';
+  if (!leftOnce){ leftOnce = true; toast('它跟着你出去了。'); }
+});
+let ly = scrollY, lt = performance.now(), fastAt = -1e9;
+addEventListener('scroll', () => {
+  const now = performance.now();
+  const v = Math.abs(scrollY - ly) / Math.max(1, now - lt);
+  ly = scrollY; lt = now;
+  if (!entered || now - progScroll < 1600) return;
+  if (v > 3.5 && now - fastAt > 30000){ fastAt = now; toast('慢一点。它跟不上了。'); }
+}, { passive: true });
+let keyAt = -1e9;
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') ctx.style.display = 'none';
+  if (!entered) return;
+  if (e.target instanceof Element && e.target.closest('input,button,[tabindex]')) return;
+  if (e.key && e.key.length === 1 && performance.now() - keyAt > 25000){
+    keyAt = performance.now();
+    toast('你在跟谁说话？');
+  }
+});
+
+/* ---------- 微笑、敲门、灯、错字 ---------- */
+const smile = $('#smile');
+setInterval(() => {
+  if (entered && !document.hidden && smile.textContent.length < 90) smile.textContent += ')';
+}, 7000);
+function schedKnock(){
+  setTimeout(() => {
+    if (entered && !document.hidden){ knock(); toast('（咚、咚）', 1800); toast('（不是这个房间）', 2400); }
+    schedKnock();
+  }, rnd(85000, 150000));
+}
+const flk = $('#flicker');
+function schedFlicker(){
+  setTimeout(() => {
+    if (entered && !reduce && !document.hidden){
+      flk.style.opacity = '.14';
+      setTimeout(() => { flk.style.opacity = '0'; }, 70);
+      setTimeout(() => { flk.style.opacity = '.08'; }, 190);
+      setTimeout(() => { flk.style.opacity = '0'; }, 250);
+    }
+    schedFlicker();
+  }, rnd(18000, 42000));
+}
+function schedGlitch(){
+  setTimeout(() => {
+    if (entered && !document.hidden){
+      const gs = $$('.g').filter(g => !g.dataset.busy);
+      if (gs.length){
+        const el = pick(gs);
+        const orig = el.textContent;
+        el.dataset.busy = '1';
+        el.textContent = el.dataset.alt;
+        el.classList.add('glitch');
+        setTimeout(() => { el.textContent = orig; el.classList.remove('glitch'); delete el.dataset.busy; }, rnd(90, 200));
+      }
+      if (Math.random() < 0.35 && !reduce){
+        const sp = pick($$('#title span'));
+        sp.classList.add('j');
+        setTimeout(() => sp.classList.remove('j'), rnd(120, 420));
+      }
+    }
+    schedGlitch();
+  }, rnd(2600, 7000));
+}
+
+/* ---------- 维护者 ---------- */
+const redact = $('#redact');
+const openR = () => { redact.textContent = '你自己'; redact.classList.add('open'); };
+const closeR = () => { redact.textContent = '▇▇▇▇'; redact.classList.remove('open'); };
+if (coarse){
+  redact.addEventListener('click', () => (redact.classList.contains('open') ? closeR() : openR()));
+} else {
+  redact.addEventListener('pointerenter', openR);
+  redact.addEventListener('pointerleave', closeR);
+}
+redact.addEventListener('focus', openR);
+redact.addEventListener('blur', closeR);
+
+/* ---------- 最底下 ---------- */
+const hello = $('#hello');
+if ('IntersectionObserver' in window){
+  const io = new IntersectionObserver(es => {
+    for (const en of es){
+      if (en.isIntersecting && entered){
+        setTimeout(() => { hello.textContent = '你还在看。'; }, 2600);
+        io.disconnect();
+      }
+    }
+  }, { threshold: 1 });
+  io.observe(hello);
+}
+$('#toR3').addEventListener('click', () => {
+  const r3 = $('#r3');
+  progScroll = performance.now() + 1500;
+  r3.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+  r3.classList.add('hl');
+  setTimeout(() => r3.classList.remove('hl'), 3500);
+});
+
+/* ---------- 颗粒 ---------- */
+const cv = $('#noise'), c2 = cv.getContext('2d');
+let img = null;
+function sizeNoise(){
+  cv.width = Math.max(1, Math.ceil(innerWidth / 3));
+  cv.height = Math.max(1, Math.ceil(innerHeight / 3));
+  img = null;
+}
+function drawNoise(){
+  if (document.hidden) return;
+  if (!img) img = c2.createImageData(cv.width, cv.height);
+  const d = img.data;
+  for (let i = 0; i < d.length; i += 4){
+    const v = (Math.random() * 255) | 0;
+    d[i] = d[i + 1] = d[i + 2] = v; d[i + 3] = 255;
+  }
+  c2.putImageData(img, 0, 0);
+}
+sizeNoise(); drawNoise();
+addEventListener('resize', sizeNoise);
+setInterval(drawNoise, reduce ? 500 : 90);
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/vce701823e78c4301a35b7e07294d87301792088814092" integrity="sha512-UKNk8GbxkABxKcXYuLkO16EleLGUkcvJWtpSNmExE0Too3ZaFAxTscNWEc1OdAv5/BikHawapSCaiD2XCmp+Bw==" data-cf-beacon='{"version":"2024.11.0","token":"78694dd907a245f5a9176ee8479b2a13","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
